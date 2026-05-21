@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { X, Search, Loader2, Check } from "lucide-react";
 import { searchRobloxUsers, type RobloxUser } from "@/lib/roblox.functions";
@@ -30,6 +30,14 @@ export function SettingsModal({
   const [results, setResults] = useState<RobloxUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [picked, setPicked] = useState<CurrentUser>(user);
+  const [retryNonce, setRetryNonce] = useState(0);
+  const retryTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (retryTimerRef.current) window.clearTimeout(retryTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -42,6 +50,10 @@ export function SettingsModal({
 
   useEffect(() => {
     if (!open) return;
+    if (retryTimerRef.current) {
+      window.clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
     const q = query.trim();
     if (q.length === 0) {
       setResults([]);
@@ -58,7 +70,14 @@ export function SettingsModal({
       try {
         const res = await search({ data: { keyword: q, limit: 10 } });
         if (ctrl.signal.aborted) return;
-        if (!res.error) setResults(res.users);
+        if (!res.error) {
+          setResults(res.users);
+        } else if (res.retryAfterMs && !retryTimerRef.current) {
+          retryTimerRef.current = window.setTimeout(() => {
+            retryTimerRef.current = null;
+            if (!ctrl.signal.aborted) setRetryNonce((current) => current + 1);
+          }, res.retryAfterMs);
+        }
       } finally {
         if (!ctrl.signal.aborted) setLoading(false);
       }
@@ -66,8 +85,12 @@ export function SettingsModal({
     return () => {
       ctrl.abort();
       clearTimeout(t);
+      if (retryTimerRef.current) {
+        window.clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
     };
-  }, [query, open, search]);
+  }, [query, open, retryNonce, search]);
 
   if (!open) return null;
 

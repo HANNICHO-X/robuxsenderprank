@@ -51,6 +51,7 @@ export function SendRobuxModal({
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [friend, setFriend] = useState<Friend | null>(null);
   const [amount, setAmount] = useState<number>(200);
+  const [retryNonce, setRetryNonce] = useState(0);
   const retryTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -89,10 +90,7 @@ export function SendRobuxModal({
           if (res.retryAfterMs && !retryTimerRef.current) {
             retryTimerRef.current = window.setTimeout(() => {
               retryTimerRef.current = null;
-              if (!ctrl.signal.aborted) {
-                setQuery((current) => current.trim() === q ? `${q} ` : current);
-                setQuery((current) => current.trim() === q ? q : current);
-              }
+              if (!ctrl.signal.aborted) setRetryNonce((current) => current + 1);
             }, res.retryAfterMs);
           }
         } else {
@@ -113,7 +111,7 @@ export function SendRobuxModal({
         retryTimerRef.current = null;
       }
     };
-  }, [query, open, search]);
+  }, [query, open, retryNonce, search]);
 
 
   const showHint = useMemo(() => query.trim().length === 0, [query]);
