@@ -1,7 +1,9 @@
-import { useMemo, useState } from "react";
-import { X, Search, Check } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { X, Search, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatFull, formatRobux } from "@/lib/format";
+import { searchRobloxUsers, type RobloxUser } from "@/lib/roblox.functions";
 
 const RobuxIcon = ({ className, size = 16 }: { className?: string; size?: number }) => (
   <svg viewBox="0 0 32 32" width={size} height={size} className={cn("fill-current", className)}>
@@ -10,22 +12,30 @@ const RobuxIcon = ({ className, size = 16 }: { className?: string; size?: number
   </svg>
 );
 
-type Friend = { id: string; name: string; handle: string; color: string };
-
-const FRIENDS: Friend[] = [
-  { id: "1", name: "jeremy", handle: "@jeremy", color: "#f59e0b" },
-  { id: "2", name: "Ryuzen", handle: "@ryuzen", color: "#ef4444" },
-  { id: "3", name: "calmguy", handle: "@calmguy", color: "#10b981" },
-  { id: "4", name: "Cr4z3", handle: "@cr4z3", color: "#8b5cf6" },
-  { id: "5", name: "ROAR", handle: "@roar", color: "#3b82f6" },
-  { id: "6", name: "pilow", handle: "@pilow", color: "#ec4899" },
-  { id: "7", name: "Noahsnipz", handle: "@Noahsnipz", color: "#06b6d4" },
-  { id: "8", name: "Carrotdude", handle: "@noahsnipzthe4th", color: "#f97316" },
-  { id: "9", name: "OSNAPDAWG", handle: "@Noahsnipzthe2nd", color: "#84cc16" },
-  { id: "10", name: "Onblok1", handle: "@Onblok1", color: "#a855f7" },
-];
-
 const PRESETS = [25, 50, 100, 200];
+
+type Friend = {
+  id: string;
+  name: string;
+  handle: string;
+  avatarUrl: string | null;
+  color: string;
+};
+
+const fallbackColor = (seed: string) => {
+  const palette = ["#3b82f6", "#ef4444", "#f59e0b", "#10b981", "#8b5cf6", "#ec4899", "#06b6d4"];
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  return palette[h % palette.length];
+};
+
+const toFriend = (u: RobloxUser): Friend => ({
+  id: String(u.id),
+  name: u.displayName || u.name,
+  handle: `@${u.name}`,
+  avatarUrl: u.avatarUrl,
+  color: fallbackColor(u.name),
+});
 
 type Step = "pick" | "amount" | "sending" | "done";
 
@@ -40,26 +50,55 @@ export function SendRobuxModal({
   balance: number;
   onSent: (amount: number) => void;
 }) {
+  const search = useServerFn(searchRobloxUsers);
   const [step, setStep] = useState<Step>("pick");
   const [query, setQuery] = useState("");
+  const [results, setResults] = useState<Friend[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState<string | null>(null);
   const [friend, setFriend] = useState<Friend | null>(null);
   const [amount, setAmount] = useState<number>(200);
 
-  const filtered = useMemo(
-    () =>
-      FRIENDS.filter(
-        (f) =>
-          f.name.toLowerCase().includes(query.toLowerCase()) ||
-          f.handle.toLowerCase().includes(query.toLowerCase()),
-      ),
-    [query],
-  );
+  // Debounced Roblox search
+  useEffect(() => {
+    if (!open) return;
+    const q = query.trim();
+    if (q.length === 0) {
+      setResults([]);
+      setErrMsg(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setErrMsg(null);
+    const ctrl = new AbortController();
+    const t = setTimeout(async () => {
+      try {
+        const res = await search({ data: { keyword: q, limit: 10 } });
+        if (ctrl.signal.aborted) return;
+        if (res.error) setErrMsg(res.error);
+        setResults(res.users.map(toFriend));
+      } catch (e) {
+        if (!ctrl.signal.aborted) setErrMsg("Search failed");
+      } finally {
+        if (!ctrl.signal.aborted) setLoading(false);
+      }
+    }, 300);
+    return () => {
+      ctrl.abort();
+      clearTimeout(t);
+    };
+  }, [query, open, search]);
+
+  const showHint = useMemo(() => query.trim().length === 0, [query]);
 
   if (!open) return null;
 
   const reset = () => {
     setStep("pick");
     setQuery("");
+    setResults([]);
+    setErrMsg(null);
     setFriend(null);
     setAmount(200);
   };
@@ -115,15 +154,31 @@ export function SendRobuxModal({
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by username"
-                className="w-full h-11 bg-transparent border-2 border-blue-500 rounded-lg pl-9 pr-3 text-sm text-white placeholder:text-white/40 focus:outline-none"
+                placeholder="Search Roblox username"
+                className="w-full h-11 bg-transparent border-2 border-blue-500 rounded-lg pl-9 pr-9 text-sm text-white placeholder:text-white/40 focus:outline-none"
               />
+              {loading && (
+                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400 animate-spin" />
+              )}
             </div>
+
             <div className="text-[13px] font-bold text-white/80 mb-2">
-              My friends ({FRIENDS.length})
+              {showHint ? "Suggestions" : `Results${results.length ? ` (${results.length})` : ""}`}
             </div>
-            <div className="max-h-[320px] overflow-y-auto -mx-2 pr-1">
-              {filtered.map((f) => (
+
+            <div className="max-h-[320px] overflow-y-auto -mx-2 pr-1 min-h-[180px]">
+              {showHint && (
+                <div className="px-3 py-10 text-center text-white/50 text-sm">
+                  Start typing to search Roblox players
+                </div>
+              )}
+              {!showHint && errMsg && (
+                <div className="px-3 py-3 text-center text-red-400 text-sm">{errMsg}</div>
+              )}
+              {!showHint && !loading && !errMsg && results.length === 0 && (
+                <div className="px-3 py-10 text-center text-white/50 text-sm">No players found</div>
+              )}
+              {results.map((f) => (
                 <button
                   key={f.id}
                   onClick={() => {
@@ -133,15 +188,21 @@ export function SendRobuxModal({
                   className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-left"
                 >
                   <div
-                    className="w-9 h-9 rounded-full shrink-0 border border-white/10"
+                    className="w-9 h-9 rounded-full shrink-0 border border-white/10 overflow-hidden flex items-center justify-center text-white text-xs font-bold"
                     style={{ backgroundColor: f.color }}
-                  />
-                  <span className="text-[14px] font-semibold text-white">{f.name}</span>
+                  >
+                    {f.avatarUrl ? (
+                      <img src={f.avatarUrl} alt={f.name} className="w-full h-full object-cover" />
+                    ) : (
+                      f.name.slice(0, 1).toUpperCase()
+                    )}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[14px] font-semibold text-white truncate">{f.name}</span>
+                    <span className="text-[12px] text-white/50 truncate">{f.handle}</span>
+                  </div>
                 </button>
               ))}
-              {filtered.length === 0 && (
-                <div className="px-3 py-6 text-center text-white/50 text-sm">No friends found</div>
-              )}
             </div>
           </div>
         )}
@@ -149,15 +210,20 @@ export function SendRobuxModal({
         {step === "amount" && friend && (
           <div className="p-6 flex flex-col items-center">
             <div
-              className="w-16 h-16 rounded-full border border-white/10 mb-3"
+              className="w-16 h-16 rounded-full border border-white/10 mb-3 overflow-hidden flex items-center justify-center text-white text-xl font-bold"
               style={{ backgroundColor: friend.color }}
-            />
+            >
+              {friend.avatarUrl ? (
+                <img src={friend.avatarUrl} alt={friend.name} className="w-full h-full object-cover" />
+              ) : (
+                friend.name.slice(0, 1).toUpperCase()
+              )}
+            </div>
             <div className="text-[15px] font-semibold text-white/90">{friend.name}</div>
+            <div className="text-[12px] text-white/50">{friend.handle}</div>
             <div className="flex items-center gap-2 mt-4 mb-5">
               <RobuxIcon size={28} className="text-white" />
-              <span className="text-[36px] font-black tracking-tight">
-                {formatFull(amount)}
-              </span>
+              <span className="text-[36px] font-black tracking-tight">{formatFull(amount)}</span>
             </div>
             <div className="flex flex-wrap gap-2 justify-center mb-6">
               {PRESETS.map((p) => (
@@ -183,9 +249,12 @@ export function SendRobuxModal({
             >
               {amount > balance ? "Not enough Robux" : "Next"}
             </button>
-            <p className="text-[11px] text-white/40 mt-3">
-              Robux are sent instantly with no fees
-            </p>
+            <button
+              onClick={() => setStep("pick")}
+              className="mt-3 text-[12px] text-white/50 hover:text-white/80"
+            >
+              Choose a different player
+            </button>
           </div>
         )}
 
