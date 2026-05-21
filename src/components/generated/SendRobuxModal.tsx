@@ -147,22 +147,22 @@ export function SendRobuxModal({
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search Roblox username"
-                className="w-full h-11 bg-transparent border-2 border-blue-500 rounded-lg pl-9 pr-9 text-sm text-white placeholder:text-white/40 focus:outline-none"
+                placeholder="Search by username"
+                className="w-full h-12 bg-transparent border-2 border-blue-500 rounded-xl pl-10 pr-10 text-[15px] text-white placeholder:text-white/40 focus:outline-none"
               />
               {loading && (
                 <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400 animate-spin" />
               )}
             </div>
 
-            <div className="text-[13px] font-bold text-white/80 mb-2">
-              {showHint ? "Suggestions" : `Results${results.length ? ` (${results.length})` : ""}`}
+            <div className="text-[14px] font-extrabold text-white mb-2">
+              {showHint ? "My friends" : `Results${results.length ? ` (${results.length})` : ""}`}
             </div>
 
             <div className="max-h-[320px] overflow-y-auto -mx-2 pr-1 min-h-[180px]">
               {showHint && (
                 <div className="px-3 py-10 text-center text-white/50 text-sm">
-                  Start typing to search Roblox players
+                  Search Roblox to send Robux to friends
                 </div>
               )}
               {!showHint && errMsg && (

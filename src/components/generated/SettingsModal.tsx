@@ -52,7 +52,7 @@ export function SettingsModal({
     const ctrl = new AbortController();
     const t = setTimeout(async () => {
       try {
-        const res = await search({ data: { keyword: q, limit: 8 } });
+        const res = await search({ data: { keyword: q, limit: 10 } });
         if (!ctrl.signal.aborted) setResults(res.users);
       } finally {
         if (!ctrl.signal.aborted) setLoading(false);
@@ -94,13 +94,18 @@ export function SettingsModal({
         </div>
 
         <div className="p-5 space-y-6 max-h-[70vh] overflow-y-auto">
-          {/* Current profile preview */}
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5">
-            <RobloxAvatar src={picked.avatarUrl} alt={picked.name} size={44} />
-            <div className="flex flex-col min-w-0">
-              <span className="text-[14px] font-bold text-white truncate">{picked.name}</span>
-              <span className="text-[12px] text-white/50 truncate">{picked.handle}</span>
+          {/* Current profile preview — Roblox-style top-nav chip */}
+          <div>
+            <label className="block text-[12px] font-bold text-white/70 mb-2 uppercase tracking-wider">
+              Your profile
+            </label>
+            <div className="inline-flex items-center gap-2 bg-[#1b1b1e] border border-white/5 rounded-full pl-1 pr-4 py-1">
+              <RobloxAvatar src={picked.avatarUrl} alt={picked.name} size={28} />
+              <span className="text-[13px] font-extrabold text-white tracking-wide uppercase truncate max-w-[200px]">
+                {picked.name}
+              </span>
             </div>
+            <p className="text-[11px] text-white/40 mt-1.5">{picked.handle}</p>
           </div>
 
           {/* Robux balance */}

@@ -8,17 +8,22 @@ export type RobloxUser = {
   avatarUrl: string | null;
 };
 
+const ALLOWED_LIMITS = [10, 25, 50, 100] as const;
+const clampLimit = (n: number) =>
+  ALLOWED_LIMITS.reduce((prev, curr) => (Math.abs(curr - n) < Math.abs(prev - n) ? curr : prev), 10);
+
 export const searchRobloxUsers = createServerFn({ method: "GET" })
   .inputValidator(
     z.object({
       keyword: z.string().trim().min(1).max(50),
-      limit: z.number().int().min(1).max(25).default(10),
+      limit: z.number().int().min(1).max(100).default(10),
     }),
   )
   .handler(async ({ data }): Promise<{ users: RobloxUser[]; error: string | null }> => {
+    const limit = clampLimit(data.limit);
     try {
       const searchRes = await fetch(
-        `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(data.keyword)}&limit=${data.limit}`,
+        `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(data.keyword)}&limit=${limit}`,
         { headers: { Accept: "application/json" } },
       );
       if (!searchRes.ok) {
