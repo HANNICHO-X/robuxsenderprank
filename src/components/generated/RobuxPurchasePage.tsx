@@ -61,10 +61,10 @@ export const RobuxPurchasePage = () => {
               9
             </div>
           </div>
-          <button type="button" className="flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors h-[36px] rounded-lg p-1 px-3 cursor-pointer font-medium text-[16px] leading-[16px] text-[#f7f7f8]">
+          <button type="button" title={formatFull(balance)} className="flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors h-[36px] rounded-lg p-1 px-3 cursor-pointer font-medium text-[16px] leading-[16px] text-[#f7f7f8]">
             <span className="flex items-center gap-1.5 relative">
               <RobuxIcon size={20} className="text-white" />
-              <span className="text-[#f7f7f8] font-semibold text-[15px]">0</span>
+              <span className="text-[#f7f7f8] font-semibold text-[15px]">{formatRobux(balance)}</span>
             </span>
           </button>
           <div className="cursor-pointer hover:bg-white/5 p-1.5 rounded-md">
