@@ -273,6 +273,17 @@ export const RobuxPurchasePage = () => {
         balance={balance}
         onSent={(amount) => setBalance((b) => Math.max(0, b - amount))}
       />
+
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        balance={balance}
+        user={currentUser}
+        onSave={({ balance: nb, user }) => {
+          setBalance(nb);
+          setCurrentUser(user);
+        }}
+      />
     </div>;
 };
 export default RobuxPurchasePage;
