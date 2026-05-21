@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { X, Search, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -51,10 +51,22 @@ export function SendRobuxModal({
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [friend, setFriend] = useState<Friend | null>(null);
   const [amount, setAmount] = useState<number>(200);
+  const [retryNonce, setRetryNonce] = useState(0);
+  const retryTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (retryTimerRef.current) window.clearTimeout(retryTimerRef.current);
+    };
+  }, []);
 
   // Debounced Roblox search — min 2 chars, 500ms debounce, keep prior results on refetch
   useEffect(() => {
     if (!open) return;
+    if (retryTimerRef.current) {
+      window.clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
     const q = query.trim();
     if (q.length === 0) {
       setResults([]);
@@ -75,9 +87,15 @@ export function SendRobuxModal({
         if (ctrl.signal.aborted) return;
         if (res.error) {
           setErrMsg(res.error);
-          // Keep previous results visible on transient errors
+          if (res.retryAfterMs && !retryTimerRef.current) {
+            retryTimerRef.current = window.setTimeout(() => {
+              retryTimerRef.current = null;
+              if (!ctrl.signal.aborted) setRetryNonce((current) => current + 1);
+            }, res.retryAfterMs);
+          }
         } else {
           setResults(res.users.map(toFriend));
+          setErrMsg(null);
         }
       } catch (e) {
         if (!ctrl.signal.aborted) setErrMsg("Search failed");
@@ -88,8 +106,12 @@ export function SendRobuxModal({
     return () => {
       ctrl.abort();
       clearTimeout(t);
+      if (retryTimerRef.current) {
+        window.clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
     };
-  }, [query, open, search]);
+  }, [query, open, retryNonce, search]);
 
 
   const showHint = useMemo(() => query.trim().length === 0, [query]);
