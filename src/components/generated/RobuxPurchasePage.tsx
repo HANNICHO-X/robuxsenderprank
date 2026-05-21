@@ -139,24 +139,23 @@ export const RobuxPurchasePage = () => {
         <main className="flex-1 bg-[#0f0f13] ml-0 md:ml-[250px] overflow-y-auto p-8 relative h-full">
           <div className="max-w-3xl mx-auto w-full pb-20">
             {/* Top Right Action */}
-            <div className="absolute top-6 right-8 flex flex-col gap-4 bg-[#191a1f] rounded-full py-3 px-5 w-[170px]">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center justify-center gap-1">
-                  <RobuxIcon size={24} className="text-[#f7f7f8]" />
-                  <span className="text-[#f7f7f8] text-[24px] font-bold leading-[33.6px]">0</span>
-                </div>
-                <div className="flex gap-2">
-                  <button className="relative flex items-center justify-center bg-[rgba(208,217,251,0.12)] hover:bg-[rgba(208,217,251,0.2)] text-[#f7f7f8] font-semibold text-[12px] leading-[12px] h-[32px] rounded-lg pl-2 pr-3 transition-colors shrink-0">
-                    <span className="flex items-center gap-1 min-w-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" className="fill-current shrink-0">
-                        <path d="M27 25.9999C27.5523 25.9999 28 26.4476 28 26.9999C27.9999 27.5521 27.5522 27.9999 27 27.9999H5C4.44777 27.9999 4.00008 27.5521 4 26.9999C4 26.4476 4.44772 25.9999 5 25.9999H27Z" />
-                        <path d="M15.293 4.29289C15.6835 3.90237 16.3165 3.90237 16.707 4.29289L22.707 10.2929C23.0975 10.6834 23.0975 11.3165 22.707 11.707C22.3165 12.0974 21.6835 12.0974 21.293 11.707L17 7.41399V20.9999C16.9999 21.5521 16.5522 21.9999 16 21.9999C15.4478 21.9999 15.0001 21.5521 15 20.9999V7.41399L10.707 11.707C10.3165 12.0974 9.68347 12.0974 9.29297 11.707C8.90247 11.3165 8.90252 10.6834 9.29297 10.2929L15.293 4.29289Z" />
-                      </svg>
-                      <span className="py-1 whitespace-nowrap overflow-hidden text-ellipsis">Send</span>
-                    </span>
-                  </button>
-                </div>
+            <div className="absolute top-6 right-8 flex items-center gap-3 bg-[#191a1f] rounded-full py-2 pl-5 pr-2 max-w-[calc(100%-2rem)]">
+              <div className="flex items-center justify-center gap-1 min-w-0">
+                <RobuxIcon size={22} className="text-[#f7f7f8] shrink-0" />
+                <span
+                  title={formatFull(balance)}
+                  className="text-[#f7f7f8] text-[22px] font-bold leading-none truncate"
+                >
+                  {formatRobux(balance)}
+                </span>
               </div>
+              <button
+                onClick={() => setSendOpen(true)}
+                className="shrink-0 flex items-center gap-1.5 bg-[rgba(208,217,251,0.12)] hover:bg-[rgba(208,217,251,0.22)] text-[#f7f7f8] font-semibold text-[12px] leading-none h-[34px] rounded-full px-3 transition-colors"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span className="whitespace-nowrap">Send</span>
+              </button>
             </div>
 
             {/* Header */}
