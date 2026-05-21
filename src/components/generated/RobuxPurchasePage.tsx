@@ -173,13 +173,13 @@ export const RobuxPurchasePage = () => {
                 {/* Banner Card */}
                 <div className="relative h-[112px] w-full overflow-hidden border-b border-white/5 bg-[rgb(18,18,21)] flex items-center">
                   <div className="absolute inset-0 ml-auto w-full sm:w-[750px] right-0">
-                    <img src={contextImage3} alt="Background" className="w-full h-full object-cover object-right" />
+                    <img src={rivalsBanner} alt="RIVALS RPG Bundle" className="w-full h-full object-cover object-right" />
                   </div>
-                  <div className="absolute inset-0 w-full sm:w-[750px] bg-gradient-to-r from-[rgb(18,18,21)] via-[rgb(18,18,21)]/80 to-[rgba(18,18,21,0)] z-10 pointer-events-none"></div>
+                  <div className="absolute inset-0 w-full sm:w-[750px] bg-gradient-to-r from-[rgb(18,18,21)] via-[rgb(18,18,21)]/60 to-[rgba(18,18,21,0)] z-10 pointer-events-none"></div>
                   
                   <div className="relative z-20 flex items-center gap-4 px-6 w-full">
                     <div className="w-[72px] h-[72px] rounded-full overflow-hidden shrink-0 shadow-xl relative bg-black/20">
-                      <img src={contextImage3} alt="RIVALS icon" className="w-full h-full object-cover object-left" />
+                      <img src={rivalsBanner} alt="RIVALS icon" className="w-full h-full object-cover object-left" />
                       <div className="absolute inset-0 rounded-full border border-white/10 ring-1 ring-inset ring-white/10"></div>
                     </div>
                     <div className="flex flex-col gap-1.5">
