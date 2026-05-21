@@ -253,6 +253,13 @@ export const RobuxPurchasePage = () => {
       <button className="fixed bottom-6 right-6 bg-[#232328] hover:bg-[#2a2a30] text-sm font-semibold px-4 py-2 rounded-lg border border-white/10 shadow-xl transition-transform active:scale-95 z-50">
         Chat
       </button>
+
+      <SendRobuxModal
+        open={sendOpen}
+        onClose={() => setSendOpen(false)}
+        balance={balance}
+        onSent={(amount) => setBalance((b) => Math.max(0, b - amount))}
+      />
     </div>;
 };
 export default RobuxPurchasePage;
