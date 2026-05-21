@@ -52,7 +52,7 @@ export function SettingsModal({
     const ctrl = new AbortController();
     const t = setTimeout(async () => {
       try {
-        const res = await search({ data: { keyword: q, limit: 8 } });
+        const res = await search({ data: { keyword: q, limit: 10 } });
         if (!ctrl.signal.aborted) setResults(res.users);
       } finally {
         if (!ctrl.signal.aborted) setLoading(false);
