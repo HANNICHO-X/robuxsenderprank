@@ -110,27 +110,34 @@ export function SendRobuxModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] bg-[#05060A]/80 backdrop-blur-md flex items-center justify-center p-4"
       onClick={handleClose}
     >
       <div
-        className="bg-[#0f1015] border border-white/10 rounded-2xl w-full max-w-[420px] shadow-2xl overflow-hidden"
+        className="relative rounded-2xl w-full max-w-[420px] overflow-hidden border border-white/[0.06] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.04)]"
+        style={{
+          background:
+            "linear-gradient(180deg, #161922 0%, #0F1117 60%, #0B0D13 100%)",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06] bg-white/[0.015]">
           <div className="flex items-center gap-2">
-            <RobuxIcon size={18} className="text-white" />
-            <span className="font-bold text-[15px]">Send Robux</span>
+            <RobuxIcon size={18} className="text-white/90" />
+            <span className="font-semibold text-[15px] text-white/90 tracking-tight">Send Robux</span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-white/90" title={formatFull(balance)}>
-              <RobuxIcon size={16} className="text-white" />
-              <span className="text-[13px] font-semibold">{formatRobux(balance)}</span>
+            <div
+              className="flex items-center gap-1.5 text-white/80 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05]"
+              title={formatFull(balance)}
+            >
+              <RobuxIcon size={14} className="text-white/80" />
+              <span className="text-[12px] font-semibold tabular-nums">{formatRobux(balance)}</span>
             </div>
             <button
               onClick={handleClose}
-              className="text-white/60 hover:text-white p-1 rounded-md hover:bg-white/5"
+              className="text-white/50 hover:text-white/90 p-1 rounded-md hover:bg-white/[0.05] transition-colors"
               aria-label="Close"
             >
               <X className="w-4 h-4" />
@@ -142,34 +149,34 @@ export function SendRobuxModal({
         {step === "pick" && (
           <div className="p-5">
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35" />
               <input
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search Roblox username"
-                className="w-full h-11 bg-transparent border-2 border-blue-500 rounded-lg pl-9 pr-9 text-sm text-white placeholder:text-white/40 focus:outline-none"
+                className="w-full h-11 bg-[#0B0D13] border border-white/[0.06] rounded-lg pl-9 pr-9 text-sm text-white/90 placeholder:text-white/30 focus:outline-none focus:border-white/15 focus:bg-[#0D1018] shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)] transition-colors"
               />
               {loading && (
-                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400 animate-spin" />
+                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50 animate-spin" />
               )}
             </div>
 
-            <div className="text-[13px] font-bold text-white/80 mb-2">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-white/40 mb-2 px-1">
               {showHint ? "Suggestions" : `Results${results.length ? ` (${results.length})` : ""}`}
             </div>
 
             <div className="max-h-[320px] overflow-y-auto -mx-2 pr-1 min-h-[180px]">
               {showHint && (
-                <div className="px-3 py-10 text-center text-white/50 text-sm">
+                <div className="px-3 py-10 text-center text-white/40 text-sm">
                   Start typing to search Roblox players
                 </div>
               )}
               {!showHint && errMsg && (
-                <div className="px-3 py-3 text-center text-red-400 text-sm">{errMsg}</div>
+                <div className="px-3 py-3 text-center text-red-400/80 text-sm">{errMsg}</div>
               )}
               {!showHint && !loading && !errMsg && results.length === 0 && (
-                <div className="px-3 py-10 text-center text-white/50 text-sm">No players found</div>
+                <div className="px-3 py-10 text-center text-white/40 text-sm">No players found</div>
               )}
               {results.map((f) => (
                 <button
@@ -178,12 +185,12 @@ export function SendRobuxModal({
                     setFriend(f);
                     setStep("amount");
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-left"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/[0.04] transition-colors text-left"
                 >
                   <RobloxAvatar src={f.avatarUrl} alt={f.name} size={36} />
                   <div className="flex flex-col min-w-0">
-                    <span className="text-[14px] font-semibold text-white truncate">{f.name}</span>
-                    <span className="text-[12px] text-white/50 truncate">{f.handle}</span>
+                    <span className="text-[14px] font-semibold text-white/90 truncate">{f.name}</span>
+                    <span className="text-[12px] text-white/45 truncate">{f.handle}</span>
                   </div>
                 </button>
               ))}
@@ -197,10 +204,10 @@ export function SendRobuxModal({
               <RobloxAvatar src={friend.avatarUrl} alt={friend.name} size={64} />
             </div>
             <div className="text-[15px] font-semibold text-white/90">{friend.name}</div>
-            <div className="text-[12px] text-white/50">{friend.handle}</div>
-            <div className="flex items-center gap-2 mt-4 mb-5">
-              <RobuxIcon size={28} className="text-white" />
-              <span className="text-[36px] font-black tracking-tight">{formatFull(amount)}</span>
+            <div className="text-[12px] text-white/45">{friend.handle}</div>
+            <div className="flex items-center gap-2 mt-5 mb-5 px-5 py-3 rounded-xl bg-[#0B0D13] border border-white/[0.05] shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)]">
+              <RobuxIcon size={26} className="text-white/90" />
+              <span className="text-[34px] font-black tracking-tight text-white/95 tabular-nums">{formatFull(amount)}</span>
             </div>
             <div className="flex flex-wrap gap-2 justify-center mb-6">
               {PRESETS.map((p) => (
@@ -208,13 +215,13 @@ export function SendRobuxModal({
                   key={p}
                   onClick={() => setAmount(p)}
                   className={cn(
-                    "flex items-center gap-1.5 px-3 h-9 rounded-lg border text-[13px] font-semibold transition-colors",
+                    "flex items-center gap-1.5 px-3.5 h-9 rounded-lg border text-[13px] font-semibold transition-all",
                     amount === p
-                      ? "border-white/60 bg-white/10"
-                      : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]",
+                      ? "border-white/15 bg-white/[0.08] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                      : "border-white/[0.06] bg-white/[0.02] text-white/70 hover:bg-white/[0.05] hover:text-white/90",
                   )}
                 >
-                  <RobuxIcon size={14} className="text-white" />
+                  <RobuxIcon size={13} className="opacity-80" />
                   {p}
                 </button>
               ))}
@@ -222,13 +229,18 @@ export function SendRobuxModal({
             <button
               onClick={handleSend}
               disabled={amount <= 0 || amount > balance}
-              className="w-full h-12 bg-blue-500 hover:bg-blue-600 disabled:bg-white/10 disabled:text-white/40 rounded-lg font-bold text-white text-[15px] transition-colors"
+              className="w-full h-12 rounded-lg font-semibold text-white text-[15px] transition-all disabled:text-white/30 disabled:cursor-not-allowed border border-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_12px_-4px_rgba(0,0,0,0.5)]"
+              style={
+                amount <= 0 || amount > balance
+                  ? { background: "#14171F" }
+                  : { background: "linear-gradient(180deg, #2A3142 0%, #1B2030 100%)" }
+              }
             >
               {amount > balance ? "Not enough Robux" : "Next"}
             </button>
             <button
               onClick={() => setStep("pick")}
-              className="mt-3 text-[12px] text-white/50 hover:text-white/80"
+              className="mt-3 text-[12px] text-white/40 hover:text-white/70 transition-colors"
             >
               Choose a different player
             </button>
@@ -237,30 +249,30 @@ export function SendRobuxModal({
 
         {step === "sending" && (
           <div className="p-10 flex flex-col items-center gap-5">
-            <div className="w-16 h-16 rounded-full border-4 border-white/10 border-t-blue-500 animate-spin" />
+            <div className="w-16 h-16 rounded-full border-4 border-white/[0.06] border-t-white/60 animate-spin" />
             <div className="text-center">
-              <div className="font-bold text-[18px]">Sending Robux...</div>
-              <div className="text-white/50 text-[13px] mt-1">Please wait</div>
+              <div className="font-semibold text-[17px] text-white/90">Sending Robux...</div>
+              <div className="text-white/40 text-[13px] mt-1">Please wait</div>
             </div>
           </div>
         )}
 
         {step === "done" && friend && (
           <div className="p-8 flex flex-col items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center">
-              <Check className="w-9 h-9 text-white" strokeWidth={3} />
+            <div className="w-16 h-16 rounded-full bg-[#1B2030] border border-white/[0.08] flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <Check className="w-8 h-8 text-white/90" strokeWidth={2.5} />
             </div>
             <div className="text-center">
-              <div className="font-black text-[22px]">Robux Sent!</div>
-              <p className="text-white/70 text-[14px] mt-2">
+              <div className="font-bold text-[20px] text-white/95">Robux Sent</div>
+              <p className="text-white/55 text-[14px] mt-2">
                 You sent{" "}
-                <span className="font-bold text-white">{formatFull(amount)} Robux</span> to{" "}
-                <span className="font-bold text-white">{friend.handle}</span>
+                <span className="font-semibold text-white/90">{formatFull(amount)} Robux</span> to{" "}
+                <span className="font-semibold text-white/90">{friend.handle}</span>
               </p>
             </div>
             <button
               onClick={handleClose}
-              className="mt-3 px-8 h-11 bg-white/10 hover:bg-white/15 rounded-lg font-bold text-[14px] transition-colors"
+              className="mt-3 px-8 h-11 bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg font-semibold text-white/90 text-[14px] transition-colors"
             >
               Done
             </button>
