@@ -21,19 +21,33 @@ export const searchRobloxUsers = createServerFn({ method: "GET" })
   )
   .handler(async ({ data }): Promise<{ users: RobloxUser[]; error: string | null }> => {
     const limit = clampLimit(data.limit);
+    const url = `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(data.keyword)}&limit=${limit}`;
+    const headers = {
+      Accept: "application/json",
+      "User-Agent": "Mozilla/5.0 (compatible; RobuxApp/1.0)",
+    };
     try {
-      const searchRes = await fetch(
-        `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(data.keyword)}&limit=${limit}`,
-        { headers: { Accept: "application/json" } },
-      );
+      // Retry once on 429 with short backoff
+      let searchRes = await fetch(url, { headers });
+      if (searchRes.status === 429) {
+        await new Promise((r) => setTimeout(r, 600));
+        searchRes = await fetch(url, { headers });
+      }
       if (!searchRes.ok) {
-        return { users: [], error: `Roblox search failed (${searchRes.status})` };
+        return {
+          users: [],
+          error:
+            searchRes.status === 429
+              ? "Roblox is rate-limiting, try again in a moment"
+              : `Roblox search failed (${searchRes.status})`,
+        };
       }
       const searchJson = (await searchRes.json()) as {
         data?: { id: number; name: string; displayName: string }[];
       };
       const users = searchJson.data ?? [];
       if (users.length === 0) return { users: [], error: null };
+
 
       const ids = users.map((u) => u.id).join(",");
       let avatarMap = new Map<number, string>();
