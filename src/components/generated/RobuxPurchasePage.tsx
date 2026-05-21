@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Home, User, MessageSquare, Users, UserCircle, Briefcase, ArrowLeftRight, Users2, FileText, ShoppingBag, CreditCard, Search, Bell, Settings, Send, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import contextImage3 from "@/assets/magicpath/context/03-context-image-3-78f715e6e9c5.png";
+import { formatRobux, formatFull } from '@/lib/format';
+import SendRobuxModal from './SendRobuxModal';
+import rivalsBanner from "@/assets/magicpath/rivals-banner.png";
 const RobuxIcon = ({
   className,
   size = 16
@@ -24,6 +26,8 @@ const RobloxPlusIcon = ({
     <path d="M13.855 3.56a4.382 4.382 0 014.29 0l8.71 4.908A4.17 4.17 0 0129 12.093v9.814a4.169 4.169 0 01-2.145 3.625l-8.71 4.907-.252.131a4.385 4.385 0 01-3.786 0l-.252-.13-2.837-1.6A2.001 2.001 0 0110 27.099V13a2 2 0 012-2h8a2 2 0 012 2v7a2 2 0 01-2 2h-4a1 1 0 010-2h4v-7h-8v14.098l2.837 1.598a2.382 2.382 0 002.326 0l8.711-4.908A2.168 2.168 0 0027 21.907v-9.814c0-.756-.414-1.48-1.126-1.882l-8.71-4.908a2.383 2.383 0 00-2.327 0L6.126 10.21A2.169 2.169 0 005 12.093v9.814c0 .757.414 1.48 1.126 1.882l.364.205a1.001 1.001 0 01-.981 1.743l-.364-.205A4.169 4.169 0 013 21.907v-9.814a4.16 4.16 0 011.901-3.478l.244-.147 8.71-4.907z" />
   </svg>;
 export const RobuxPurchasePage = () => {
+  const [balance, setBalance] = useState<number>(195_117_403);
+  const [sendOpen, setSendOpen] = useState(false);
   return <div className="min-h-screen flex flex-col bg-[#0f0f13] text-white font-sans overflow-hidden">
       {/* Top Navigation Bar */}
       <nav className="h-12 bg-[#1b1b1e] border-b border-white/5 flex items-center px-6 shrink-0 fixed top-0 w-full z-50 justify-between gap-4">
@@ -57,10 +61,10 @@ export const RobuxPurchasePage = () => {
               9
             </div>
           </div>
-          <button type="button" className="flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors h-[36px] rounded-lg p-1 px-3 cursor-pointer font-medium text-[16px] leading-[16px] text-[#f7f7f8]">
+          <button type="button" title={formatFull(balance)} className="flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors h-[36px] rounded-lg p-1 px-3 cursor-pointer font-medium text-[16px] leading-[16px] text-[#f7f7f8]">
             <span className="flex items-center gap-1.5 relative">
               <RobuxIcon size={20} className="text-white" />
-              <span className="text-[#f7f7f8] font-semibold text-[15px]">0</span>
+              <span className="text-[#f7f7f8] font-semibold text-[15px]">{formatRobux(balance)}</span>
             </span>
           </button>
           <div className="cursor-pointer hover:bg-white/5 p-1.5 rounded-md">
@@ -135,24 +139,23 @@ export const RobuxPurchasePage = () => {
         <main className="flex-1 bg-[#0f0f13] ml-0 md:ml-[250px] overflow-y-auto p-8 relative h-full">
           <div className="max-w-3xl mx-auto w-full pb-20">
             {/* Top Right Action */}
-            <div className="absolute top-6 right-8 flex flex-col gap-4 bg-[#191a1f] rounded-full py-3 px-5 w-[170px]">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center justify-center gap-1">
-                  <RobuxIcon size={24} className="text-[#f7f7f8]" />
-                  <span className="text-[#f7f7f8] text-[24px] font-bold leading-[33.6px]">0</span>
-                </div>
-                <div className="flex gap-2">
-                  <button className="relative flex items-center justify-center bg-[rgba(208,217,251,0.12)] hover:bg-[rgba(208,217,251,0.2)] text-[#f7f7f8] font-semibold text-[12px] leading-[12px] h-[32px] rounded-lg pl-2 pr-3 transition-colors shrink-0">
-                    <span className="flex items-center gap-1 min-w-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" className="fill-current shrink-0">
-                        <path d="M27 25.9999C27.5523 25.9999 28 26.4476 28 26.9999C27.9999 27.5521 27.5522 27.9999 27 27.9999H5C4.44777 27.9999 4.00008 27.5521 4 26.9999C4 26.4476 4.44772 25.9999 5 25.9999H27Z" />
-                        <path d="M15.293 4.29289C15.6835 3.90237 16.3165 3.90237 16.707 4.29289L22.707 10.2929C23.0975 10.6834 23.0975 11.3165 22.707 11.707C22.3165 12.0974 21.6835 12.0974 21.293 11.707L17 7.41399V20.9999C16.9999 21.5521 16.5522 21.9999 16 21.9999C15.4478 21.9999 15.0001 21.5521 15 20.9999V7.41399L10.707 11.707C10.3165 12.0974 9.68347 12.0974 9.29297 11.707C8.90247 11.3165 8.90252 10.6834 9.29297 10.2929L15.293 4.29289Z" />
-                      </svg>
-                      <span className="py-1 whitespace-nowrap overflow-hidden text-ellipsis">Send</span>
-                    </span>
-                  </button>
-                </div>
+            <div className="absolute top-6 right-8 flex items-center gap-3 bg-[#191a1f] rounded-full py-2 pl-5 pr-2 max-w-[calc(100%-2rem)]">
+              <div className="flex items-center justify-center gap-1 min-w-0">
+                <RobuxIcon size={22} className="text-[#f7f7f8] shrink-0" />
+                <span
+                  title={formatFull(balance)}
+                  className="text-[#f7f7f8] text-[22px] font-bold leading-none truncate"
+                >
+                  {formatRobux(balance)}
+                </span>
               </div>
+              <button
+                onClick={() => setSendOpen(true)}
+                className="shrink-0 flex items-center gap-1.5 bg-[rgba(208,217,251,0.12)] hover:bg-[rgba(208,217,251,0.22)] text-[#f7f7f8] font-semibold text-[12px] leading-none h-[34px] rounded-full px-3 transition-colors"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span className="whitespace-nowrap">Send</span>
+              </button>
             </div>
 
             {/* Header */}
@@ -170,13 +173,13 @@ export const RobuxPurchasePage = () => {
                 {/* Banner Card */}
                 <div className="relative h-[112px] w-full overflow-hidden border-b border-white/5 bg-[rgb(18,18,21)] flex items-center">
                   <div className="absolute inset-0 ml-auto w-full sm:w-[750px] right-0">
-                    <img src={contextImage3} alt="Background" className="w-full h-full object-cover object-right" />
+                    <img src={rivalsBanner} alt="RIVALS RPG Bundle" className="w-full h-full object-cover object-right" />
                   </div>
-                  <div className="absolute inset-0 w-full sm:w-[750px] bg-gradient-to-r from-[rgb(18,18,21)] via-[rgb(18,18,21)]/80 to-[rgba(18,18,21,0)] z-10 pointer-events-none"></div>
+                  <div className="absolute inset-0 w-full sm:w-[750px] bg-gradient-to-r from-[rgb(18,18,21)] via-[rgb(18,18,21)]/60 to-[rgba(18,18,21,0)] z-10 pointer-events-none"></div>
                   
                   <div className="relative z-20 flex items-center gap-4 px-6 w-full">
                     <div className="w-[72px] h-[72px] rounded-full overflow-hidden shrink-0 shadow-xl relative bg-black/20">
-                      <img src={contextImage3} alt="RIVALS icon" className="w-full h-full object-cover object-left" />
+                      <img src={rivalsBanner} alt="RIVALS icon" className="w-full h-full object-cover object-left" />
                       <div className="absolute inset-0 rounded-full border border-white/10 ring-1 ring-inset ring-white/10"></div>
                     </div>
                     <div className="flex flex-col gap-1.5">
@@ -250,6 +253,13 @@ export const RobuxPurchasePage = () => {
       <button className="fixed bottom-6 right-6 bg-[#232328] hover:bg-[#2a2a30] text-sm font-semibold px-4 py-2 rounded-lg border border-white/10 shadow-xl transition-transform active:scale-95 z-50">
         Chat
       </button>
+
+      <SendRobuxModal
+        open={sendOpen}
+        onClose={() => setSendOpen(false)}
+        balance={balance}
+        onSent={(amount) => setBalance((b) => Math.max(0, b - amount))}
+      />
     </div>;
 };
 export default RobuxPurchasePage;
