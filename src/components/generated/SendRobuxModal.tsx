@@ -52,13 +52,17 @@ export function SendRobuxModal({
   const [friend, setFriend] = useState<Friend | null>(null);
   const [amount, setAmount] = useState<number>(200);
 
-  // Debounced Roblox search
+  // Debounced Roblox search — min 2 chars, 500ms debounce, keep prior results on refetch
   useEffect(() => {
     if (!open) return;
     const q = query.trim();
     if (q.length === 0) {
       setResults([]);
       setErrMsg(null);
+      setLoading(false);
+      return;
+    }
+    if (q.length < 2) {
       setLoading(false);
       return;
     }
@@ -69,19 +73,24 @@ export function SendRobuxModal({
       try {
         const res = await search({ data: { keyword: q, limit: 10 } });
         if (ctrl.signal.aborted) return;
-        if (res.error) setErrMsg(res.error);
-        setResults(res.users.map(toFriend));
+        if (res.error) {
+          setErrMsg(res.error);
+          // Keep previous results visible on transient errors
+        } else {
+          setResults(res.users.map(toFriend));
+        }
       } catch (e) {
         if (!ctrl.signal.aborted) setErrMsg("Search failed");
       } finally {
         if (!ctrl.signal.aborted) setLoading(false);
       }
-    }, 300);
+    }, 500);
     return () => {
       ctrl.abort();
       clearTimeout(t);
     };
   }, [query, open, search]);
+
 
   const showHint = useMemo(() => query.trim().length === 0, [query]);
 
