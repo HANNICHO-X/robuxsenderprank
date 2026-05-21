@@ -32,8 +32,8 @@ export const RobuxPurchasePage = () => {
   const [sendOpen, setSendOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<CurrentUser>({
-    name: 'HANNICHO',
-    handle: '@HANNICHO',
+    name: 'New User',
+    handle: '@newuser',
     avatarUrl: null,
   });
   return <div className="min-h-screen flex flex-col bg-[#0f0f13] text-white font-sans overflow-hidden">
