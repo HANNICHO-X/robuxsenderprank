@@ -5,7 +5,7 @@ import { formatRobux, formatFull } from '@/lib/format';
 import SendRobuxModal from './SendRobuxModal';
 import SettingsModal, { type CurrentUser } from './SettingsModal';
 import { RobloxAvatar } from './RobloxAvatar';
-import rivalsBanner from "@/assets/magicpath/rivals-banner.png";
+const rivalsBanner = "https://tr.rbxcdn.com/180DAY-227c6dec8836586299536584513dd518/768/432/Image/Png/noFilter";
 const RobuxIcon = ({
   className,
   size = 16
