@@ -3,6 +3,8 @@ import { Home, User, MessageSquare, Users, UserCircle, Briefcase, ArrowLeftRight
 import { cn } from '@/lib/utils';
 import { formatRobux, formatFull } from '@/lib/format';
 import SendRobuxModal from './SendRobuxModal';
+import SettingsModal, { type CurrentUser } from './SettingsModal';
+import { RobloxAvatar } from './RobloxAvatar';
 import rivalsBanner from "@/assets/magicpath/rivals-banner.png";
 const RobuxIcon = ({
   className,
