@@ -92,7 +92,7 @@ export const RobuxPurchasePage = () => {
           <div className="flex-1 py-4">
             {[{
             type: 'profile',
-            label: 'HANNICHO'
+            label: currentUser.name
           }, {
             icon: Home,
             label: 'Home'
@@ -133,7 +133,7 @@ export const RobuxPurchasePage = () => {
             label: 'Buy Gift Cards'
           }].map(item => <a key={item.label} href="#" className="flex items-center justify-between px-5 py-2.5 hover:bg-white/5 group">
                 <div className="flex items-center gap-4 text-white/90 group-hover:text-white">
-                  {item.type === 'profile' ? <div className="w-[22px] h-[22px] rounded-full bg-blue-500 overflow-hidden shrink-0 border border-white/10" /> : item.icon && <item.icon className="w-[22px] h-[22px] shrink-0" strokeWidth={2} />}
+                  {item.type === 'profile' ? <RobloxAvatar src={currentUser.avatarUrl} alt={currentUser.name} size={22} /> : item.icon && <item.icon className="w-[22px] h-[22px] shrink-0" strokeWidth={2} />}
                   <span className="text-[15px] font-bold">{item.label}</span>
                 </div>
                 {item.badge && <span className="bg-white text-black text-[11px] font-extrabold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
