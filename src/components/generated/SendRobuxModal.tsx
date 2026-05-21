@@ -4,6 +4,7 @@ import { X, Search, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatFull, formatRobux } from "@/lib/format";
 import { searchRobloxUsers, type RobloxUser } from "@/lib/roblox.functions";
+import { RobloxAvatar } from "./RobloxAvatar";
 
 const RobuxIcon = ({ className, size = 16 }: { className?: string; size?: number }) => (
   <svg viewBox="0 0 32 32" width={size} height={size} className={cn("fill-current", className)}>
@@ -19,14 +20,6 @@ type Friend = {
   name: string;
   handle: string;
   avatarUrl: string | null;
-  color: string;
-};
-
-const fallbackColor = (seed: string) => {
-  const palette = ["#3b82f6", "#ef4444", "#f59e0b", "#10b981", "#8b5cf6", "#ec4899", "#06b6d4"];
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
-  return palette[h % palette.length];
 };
 
 const toFriend = (u: RobloxUser): Friend => ({
@@ -34,10 +27,10 @@ const toFriend = (u: RobloxUser): Friend => ({
   name: u.displayName || u.name,
   handle: `@${u.name}`,
   avatarUrl: u.avatarUrl,
-  color: fallbackColor(u.name),
 });
 
 type Step = "pick" | "amount" | "sending" | "done";
+
 
 export function SendRobuxModal({
   open,
