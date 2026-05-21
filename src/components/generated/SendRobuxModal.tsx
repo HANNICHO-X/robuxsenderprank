@@ -4,6 +4,7 @@ import { X, Search, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatFull, formatRobux } from "@/lib/format";
 import { searchRobloxUsers, type RobloxUser } from "@/lib/roblox.functions";
+import { RobloxAvatar } from "./RobloxAvatar";
 
 const RobuxIcon = ({ className, size = 16 }: { className?: string; size?: number }) => (
   <svg viewBox="0 0 32 32" width={size} height={size} className={cn("fill-current", className)}>
@@ -19,14 +20,6 @@ type Friend = {
   name: string;
   handle: string;
   avatarUrl: string | null;
-  color: string;
-};
-
-const fallbackColor = (seed: string) => {
-  const palette = ["#3b82f6", "#ef4444", "#f59e0b", "#10b981", "#8b5cf6", "#ec4899", "#06b6d4"];
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
-  return palette[h % palette.length];
 };
 
 const toFriend = (u: RobloxUser): Friend => ({
@@ -34,10 +27,10 @@ const toFriend = (u: RobloxUser): Friend => ({
   name: u.displayName || u.name,
   handle: `@${u.name}`,
   avatarUrl: u.avatarUrl,
-  color: fallbackColor(u.name),
 });
 
 type Step = "pick" | "amount" | "sending" | "done";
+
 
 export function SendRobuxModal({
   open,
@@ -187,16 +180,7 @@ export function SendRobuxModal({
                   }}
                   className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-left"
                 >
-                  <div
-                    className="w-9 h-9 rounded-full shrink-0 border border-white/10 overflow-hidden flex items-center justify-center text-white text-xs font-bold"
-                    style={{ backgroundColor: f.color }}
-                  >
-                    {f.avatarUrl ? (
-                      <img src={f.avatarUrl} alt={f.name} className="w-full h-full object-cover" />
-                    ) : (
-                      f.name.slice(0, 1).toUpperCase()
-                    )}
-                  </div>
+                  <RobloxAvatar src={f.avatarUrl} alt={f.name} size={36} />
                   <div className="flex flex-col min-w-0">
                     <span className="text-[14px] font-semibold text-white truncate">{f.name}</span>
                     <span className="text-[12px] text-white/50 truncate">{f.handle}</span>
@@ -209,15 +193,8 @@ export function SendRobuxModal({
 
         {step === "amount" && friend && (
           <div className="p-6 flex flex-col items-center">
-            <div
-              className="w-16 h-16 rounded-full border border-white/10 mb-3 overflow-hidden flex items-center justify-center text-white text-xl font-bold"
-              style={{ backgroundColor: friend.color }}
-            >
-              {friend.avatarUrl ? (
-                <img src={friend.avatarUrl} alt={friend.name} className="w-full h-full object-cover" />
-              ) : (
-                friend.name.slice(0, 1).toUpperCase()
-              )}
+            <div className="mb-3">
+              <RobloxAvatar src={friend.avatarUrl} alt={friend.name} size={64} />
             </div>
             <div className="text-[15px] font-semibold text-white/90">{friend.name}</div>
             <div className="text-[12px] text-white/50">{friend.handle}</div>

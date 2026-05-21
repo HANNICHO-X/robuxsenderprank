@@ -3,6 +3,8 @@ import { Home, User, MessageSquare, Users, UserCircle, Briefcase, ArrowLeftRight
 import { cn } from '@/lib/utils';
 import { formatRobux, formatFull } from '@/lib/format';
 import SendRobuxModal from './SendRobuxModal';
+import SettingsModal, { type CurrentUser } from './SettingsModal';
+import { RobloxAvatar } from './RobloxAvatar';
 import rivalsBanner from "@/assets/magicpath/rivals-banner.png";
 const RobuxIcon = ({
   className,
@@ -28,6 +30,12 @@ const RobloxPlusIcon = ({
 export const RobuxPurchasePage = () => {
   const [balance, setBalance] = useState<number>(195_117_403);
   const [sendOpen, setSendOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser>({
+    name: 'HANNICHO',
+    handle: '@HANNICHO',
+    avatarUrl: null,
+  });
   return <div className="min-h-screen flex flex-col bg-[#0f0f13] text-white font-sans overflow-hidden">
       {/* Top Navigation Bar */}
       <nav className="h-12 bg-[#1b1b1e] border-b border-white/5 flex items-center px-6 shrink-0 fixed top-0 w-full z-50 justify-between gap-4">
@@ -52,8 +60,8 @@ export const RobuxPurchasePage = () => {
 
         <div className="flex items-center gap-4 shrink-0">
           <div className="flex items-center gap-2 px-2 py-1 hover:bg-white/5 rounded-md cursor-pointer">
-            <div className="w-6 h-6 rounded-full bg-blue-500 overflow-hidden border border-white/10" />
-            <span className="text-xs font-bold">HANNICHO</span>
+            <RobloxAvatar src={currentUser.avatarUrl} alt={currentUser.name} size={24} />
+            <span className="text-xs font-bold truncate max-w-[120px]">{currentUser.name}</span>
           </div>
           <div className="relative cursor-pointer hover:bg-white/5 p-1.5 rounded-md">
             <Bell className="w-5 h-5" />
@@ -67,9 +75,14 @@ export const RobuxPurchasePage = () => {
               <span className="text-[#f7f7f8] font-semibold text-[15px]">{formatRobux(balance)}</span>
             </span>
           </button>
-          <div className="cursor-pointer hover:bg-white/5 p-1.5 rounded-md">
+          <button
+            type="button"
+            onClick={() => setSettingsOpen(true)}
+            className="cursor-pointer hover:bg-white/5 p-1.5 rounded-md"
+            aria-label="Settings"
+          >
             <Settings className="w-5 h-5 text-white/80" />
-          </div>
+          </button>
         </div>
       </nav>
 
@@ -79,7 +92,7 @@ export const RobuxPurchasePage = () => {
           <div className="flex-1 py-4">
             {[{
             type: 'profile',
-            label: 'HANNICHO'
+            label: currentUser.name
           }, {
             icon: Home,
             label: 'Home'
@@ -120,7 +133,7 @@ export const RobuxPurchasePage = () => {
             label: 'Buy Gift Cards'
           }].map(item => <a key={item.label} href="#" className="flex items-center justify-between px-5 py-2.5 hover:bg-white/5 group">
                 <div className="flex items-center gap-4 text-white/90 group-hover:text-white">
-                  {item.type === 'profile' ? <div className="w-[22px] h-[22px] rounded-full bg-blue-500 overflow-hidden shrink-0 border border-white/10" /> : item.icon && <item.icon className="w-[22px] h-[22px] shrink-0" strokeWidth={2} />}
+                  {item.type === 'profile' ? <RobloxAvatar src={currentUser.avatarUrl} alt={currentUser.name} size={22} /> : item.icon && <item.icon className="w-[22px] h-[22px] shrink-0" strokeWidth={2} />}
                   <span className="text-[15px] font-bold">{item.label}</span>
                 </div>
                 {item.badge && <span className="bg-white text-black text-[11px] font-extrabold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
@@ -259,6 +272,17 @@ export const RobuxPurchasePage = () => {
         onClose={() => setSendOpen(false)}
         balance={balance}
         onSent={(amount) => setBalance((b) => Math.max(0, b - amount))}
+      />
+
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        balance={balance}
+        user={currentUser}
+        onSave={({ balance: nb, user }) => {
+          setBalance(nb);
+          setCurrentUser(user);
+        }}
       />
     </div>;
 };
