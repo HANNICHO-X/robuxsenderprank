@@ -162,7 +162,7 @@ export function SendRobuxModal({
             <div className="max-h-[320px] overflow-y-auto -mx-2 pr-1 min-h-[180px]">
               {showHint && (
                 <div className="px-3 py-10 text-center text-white/50 text-sm">
-                  Start typing to search Roblox players
+                  Search Roblox to send Robux to friends
                 </div>
               )}
               {!showHint && errMsg && (
