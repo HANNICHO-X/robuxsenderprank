@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Home, User, MessageSquare, Users, UserCircle, Briefcase, ArrowLeftRight, Users2, FileText, ShoppingBag, CreditCard, Search, Bell, Settings, Send, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import contextImage3 from "@/assets/magicpath/context/03-context-image-3-78f715e6e9c5.png";
+import { formatRobux, formatFull } from '@/lib/format';
+import SendRobuxModal from './SendRobuxModal';
+import rivalsBanner from "@/assets/magicpath/rivals-banner.png";
 const RobuxIcon = ({
   className,
   size = 16
